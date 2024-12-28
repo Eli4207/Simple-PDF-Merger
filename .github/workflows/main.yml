@@ -37,7 +37,7 @@ jobs:
 
     - name: Build executable
       run: |
-        pyinstaller ${{ env.MAIN_PY_FILE }} --onefile
+        pyinstaller --onefile ${{ env.MAIN_PY_FILE }}
       working-directory: ./
 
     - name: Create Artifact (Windows)
@@ -45,14 +45,11 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: windows-executables
-        path: dist/
+        path: dist/main.exe
 
     - name: Create Artifact (Linux)
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v3
       with:
         name: linux-executables
-        path: dist/
-
-    - name: List files in dist folder
-      run: ls -R ./dist/
+        path: dist/main
