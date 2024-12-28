@@ -1,9 +1,11 @@
-name: Build Executables
+name: Build and Release Executables
 
 on:
   push:
     branches:
-      - master
+      - main
+  release:
+    types: [created]
 
 jobs:
   build:
@@ -11,45 +13,94 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['windows-latest', 'ubuntu-latest']
-
-    env:
-      MAIN_PY_FILE: 'main.py'  # Define the path to your main.py file here
+        os: ['ubuntu-latest', 'windows-latest']
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.10.x
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10.x'
 
-    - name: Install Python dependencies
-      run: |
-        pip install ttkbootstrap
-      working-directory: ./
+      - name: Install dependencies
+        run: |
+          pip install ttkbootstrap
+          pip install pypdf
 
-    - name: Install PyInstaller
-      run: |
-        pip install pyinstaller
-      working-directory: ./
+      - name: Install PyInstaller
+        run: |
+          pip install pyinstaller
 
-    - name: Build executable
-      run: |
-        pyinstaller --onefile ${{ env.MAIN_PY_FILE }}
-      working-directory: ./
+      - name: Build executable
+        run: |
+          pyinstaller --onefile main.py
 
-    - name: Create Artifact (Windows)
-      if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@v3
-      with:
-        name: windows-executables
-        path: dist/main.exe
+      - name: Upload executable (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-executable
+          path: dist/main.exe
 
-    - name: Create Artifact (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v3
-      with:
-        name: linux-executables
-        path: dist/main
+      - name: Upload executable (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-executable
+          path: dist/main
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download Windows executable
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-executable
+          path: ./dist
+
+      - name: Download Linux executable
+        uses: actions/download-artifact@v3
+        with:
+          name: linux-executable
+          path: ./dist
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Windows executable to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/main.exe
+          asset_name: main.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Linux executable to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/main
+          asset_name: main
+          asset_content_type: application/octet-stream
+
+      - name: Upload License to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./LICENSE
+          asset_name: LICENSE
+          asset_content_type: text/plain
