@@ -34,21 +34,21 @@ jobs:
 
       - name: Build executable
         run: |
-          pyinstaller --onefile main.py
+          nuitka --onefile main.py
 
       - name: Upload executable (Windows)
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
           name: windows-executable
-          path: dist/main.exe
+          path: main.exe
 
       - name: Upload executable (Linux)
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
           name: linux-executable
-          path: dist/main
+          path: main
 
   release:
     needs: build
@@ -61,13 +61,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: windows-executable
-          path: ./dist
 
       - name: Download Linux executable
         uses: actions/download-artifact@v3
         with:
           name: linux-executable
-          path: ./dist
 
       - name: Create Release
         id: create_release
