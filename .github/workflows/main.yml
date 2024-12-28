@@ -41,14 +41,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: windows-executable
-          path: main.exe
+          path: ./main.exe
 
       - name: Upload executable (Linux)
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
           name: linux-executable
-          path: main
+          path: ./main
 
   release:
     needs: build
@@ -61,11 +61,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: windows-executable
+          path: .
 
       - name: Download Linux executable
         uses: actions/download-artifact@v3
         with:
           name: linux-executable
+          path: .
 
       - name: Create Release
         id: create_release
