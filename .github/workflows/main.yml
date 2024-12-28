@@ -31,7 +31,6 @@ jobs:
       - name: Install Nuitka
         run: |
           pip install nuitka
-          apt install patchelf
 
       - name: Build executable
         run: |
