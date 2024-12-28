@@ -73,8 +73,8 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          tag: ${{ github.ref_name }}
+          tag: V1.2
         run: |
-          gh release create "$tag" ./dist/main.exe ./dist/main \
+          gh release create V1.2 ./dist/main.exe ./dist/main \
           --repo="$GITHUB_REPOSITORY" \
-          --title="Release ${tag#v}"
+          --title="Release V1.2"
