@@ -28,13 +28,14 @@ jobs:
         run: |
           pip install ttkbootstrap pypdf
 
-      - name: Install PyInstaller
+      - name: Install Nuitka
         run: |
-          pip install pyinstaller
+          pip install nuitka
+          apt install patchelf
 
       - name: Build executable
         run: |
-          pyinstaller --onefile --hidden-import=ttkbootstrap --hidden-import=pypdf main.py
+          pyinstaller --onefile main.py
 
       - name: Upload executable (Windows)
         if: matrix.os == 'windows-latest'
@@ -75,8 +76,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          tag_name: V1.2
-          release_name: Release ${{ github.event.release.tag_name }}
+          tag_name: V1.3
+          release_name: Release V1.3
           draft: false
           prerelease: false
 

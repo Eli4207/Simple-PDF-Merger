@@ -1,3 +1,4 @@
+import os.path
 from tkinter import filedialog
 import ttkbootstrap as ttk
 import tools
@@ -16,7 +17,7 @@ def update_files():
     flabel.configure(text="Added:" + files)
 
 def add_file():
-    file = filedialog.askopenfilename(initialdir="C:/Users/", title="Select a File", filetypes=(("PDF files", "*.pdf*"),("All files", "*.*")))
+    file = filedialog.askopenfilename(initialdir=os.path.abspath(__file__), title="Select a File", filetypes=(("PDF files", "*.pdf*"),("All files", "*.*")))
 
     uinput = ptextbox.get("1.0", "end-1c").replace(" ", "").rsplit("-")
 
