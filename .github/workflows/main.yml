@@ -34,21 +34,21 @@ jobs:
 
       - name: Build executable
         run: |
-          nuitka --onefile main.py
+          nuitka --onefile --output-dir=./dist main.py
 
       - name: Upload executable (Windows)
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
           name: windows-executable
-          path: main.exe
+          path: dist/main.exe
 
       - name: Upload executable (Linux)
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
           name: linux-executable
-          path: main.bin
+          path: dist/main.bin
 
   release:
     needs: build
@@ -61,13 +61,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: windows-executable
-          path: ./
+          path: ./dist
 
       - name: Download Linux executable
         uses: actions/download-artifact@v3
         with:
           name: linux-executable
-          path: ./
+          path: ./dist
 
       - name: Create Release
         id: create_release
@@ -86,7 +86,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./main.exe
+          asset_path: ./dist/main.exe
           asset_name: main.exe
           asset_content_type: application/octet-stream
 
@@ -96,6 +96,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./main.bin
+          asset_path: ./dist/main.bin
           asset_name: main.bin
           asset_content_type: application/octet-stream
