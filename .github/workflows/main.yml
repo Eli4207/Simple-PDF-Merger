@@ -22,19 +22,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10.x'
+          python-version: '3.12.x'
 
       - name: Install dependencies
         run: |
           pip install ttkbootstrap pypdf
 
-      - name: Install Nuitka
-        run: |
-          pip install nuitka
-
       - name: Build executable
-        run: |
-          nuitka --onefile --assume-yes-for-downloads main.py
+        uses: Nuitka/Nuitka-Action@main
+        with:
+          nuitka-version: main
+          script-name: main.py
+          mode: onefile
+          enable-plugins: tk-inter
 
       - name: Upload executable (Windows)
         if: matrix.os == 'windows-latest'
