@@ -41,14 +41,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-executable
-          path: main.exe
+          path: build/main.exe
 
       - name: Upload executable (Linux)
         if: matrix.os == 'ubuntu-24.04'
         uses: actions/upload-artifact@v4
         with:
           name: linux-executable
-          path: main.bin
+          path: build/main.bin
 
   release:
     needs: build
