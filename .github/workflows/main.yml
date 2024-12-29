@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest']
+        os: ['ubuntu-24.04', 'windows-latest']
 
     steps:
       - name: Checkout code
@@ -22,7 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12.x'
+          python-version: '3.10.x'
 
       - name: Install dependencies
         run: |
@@ -34,21 +34,21 @@ jobs:
 
       - name: Build executable
         run: |
-          nuitka --onefile --output-dir=./dist --assume-yes-for-downloads main.py
+          nuitka --onefile --assume-yes-for-downloads main.py
 
       - name: Upload executable (Windows)
         if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-executable
-          path: dist/main.exe
+          path: main.exe
 
       - name: Upload executable (Linux)
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-executable
-          path: dist/main.bin
+          path: main.bin
 
   release:
     needs: build
@@ -58,19 +58,18 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download Windows executable
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-executable
-          path: ./dist
+          path: ./
 
       - name: Download Linux executable
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-executable
-          path: ./dist
+          path: ./
 
       - name: Create Release
-        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -86,7 +85,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/main.exe
+          asset_path: ./main.exe
           asset_name: main.exe
           asset_content_type: application/octet-stream
 
@@ -96,6 +95,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/main.bin
+          asset_path: ./main.bin
           asset_name: main.bin
           asset_content_type: application/octet-stream
