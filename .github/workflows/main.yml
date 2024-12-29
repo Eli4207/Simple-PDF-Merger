@@ -38,14 +38,14 @@ jobs:
 
       - name: Upload executable (Windows)
         if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-executable
           path: main.exe
 
       - name: Upload executable (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        if: matrix.os == 'ubuntu-24.04'
+        uses: actions/upload-artifact@v4
         with:
           name: linux-executable
           path: main.bin
@@ -58,13 +58,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download Windows executable
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-executable
           path: ./
 
       - name: Download Linux executable
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-executable
           path: ./
