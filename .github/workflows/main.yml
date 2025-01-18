@@ -44,7 +44,7 @@ jobs:
           path: build/main.exe
 
       - name: Upload executable (Linux)
-        if: matrix.os == 'ubuntu-24.04'
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: linux-executable
