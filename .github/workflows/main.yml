@@ -24,11 +24,18 @@ jobs:
         with:
           python-version: '3.12.x'
 
-      - name: Install dependencies
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: |
           pip install ttkbootstrap pikepdf
 
-      - name: Build executable
+      - name: Install dependencies (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          pip install ttkbootstrap pikepdf pyinstaller
+
+      - name: Build executable (Linux)
+        if: matrix.os == 'ubuntu-latest'
         uses: Nuitka/Nuitka-Action@main
         with:
           nuitka-version: main
@@ -36,12 +43,10 @@ jobs:
           mode: onefile
           enable-plugins: tk-inter
 
-      - name: Upload executable (Windows)
+      - name: Build executable (Windows)
         if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-executable
-          path: build/main.exe
+        run: |
+          pyinstaller --onefile --windowed main.py
 
       - name: Upload executable (Linux)
         if: matrix.os == 'ubuntu-latest'
@@ -49,6 +54,13 @@ jobs:
         with:
           name: linux-executable
           path: build/main.bin
+
+      - name: Upload executable (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-executable
+          path: dist/main.exe
 
   release:
     needs: build
