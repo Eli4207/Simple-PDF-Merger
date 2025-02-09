@@ -87,8 +87,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          tag_name: V1.4
-          release_name: Release V1.4
+          tag_name: V1.5
+          release_name: Release V1.5
           draft: false
           prerelease: false
 
