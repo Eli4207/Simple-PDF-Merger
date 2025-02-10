@@ -26,9 +26,9 @@ def update_files():
             else:
                 mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + str(filename[i]) + ", p." + pages[i][0] + " - p." + pages[i][1] + "\n", font=('Arial', 12)))
                 mergelist[i].grid(column=0, row=3 + i)
-            buttonlist.append(ttk.Button(root, text="Delete", width=10, padding=5, command=partial(delete, i)))
-            buttonlist.append(ttk.Button(root, text="Down", width=10, padding=5, command=partial(move_down, i)))
-            buttonlist.append(ttk.Button(root, text="Up", width=10, padding=5, command=partial(move_up, i)))
+            buttonlist.append(ttk.Button(root, text="Delete", width=7, command=partial(delete, i)))
+            buttonlist.append(ttk.Button(root, text="Down", width=7, command=partial(move_down, i)))
+            buttonlist.append(ttk.Button(root, text="Up", width=7, command=partial(move_up, i)))
             buttonlist[i * 3].grid(column=3, row=3 + i, columnspan=4, sticky=ttk.W)
             buttonlist[i * 3 + 1].grid(column=3, row=3 + i, columnspan=4)
             buttonlist[i * 3 + 2].grid(column=3, row=3 + i, columnspan=4, sticky=ttk.E)
@@ -146,16 +146,16 @@ b1.grid(column=2, row=1, padx=8)
 rlabel = ttk.Label(root, text="Rotation (clockwise): ", font=('Arial', 12))
 rlabel.grid(column=0, row=2)
 
-r1 = ttk.Radiobutton(root, text="0°", variable=r, value=0, state="normal")
+r1 = ttk.Radiobutton(root, text="0°", variable=r, value=0, state="normal", width=8)
 r1.grid(column=3, row=2, padx=20)
 
-r2 = ttk.Radiobutton(root, text="90°", variable=r, value=90)
+r2 = ttk.Radiobutton(root, text="90°", variable=r, value=90, width=8)
 r2.grid(column=4, row=2, padx=20)
 
-r3 = ttk.Radiobutton(root, text="180°", variable=r, value=180)
+r3 = ttk.Radiobutton(root, text="180°", variable=r, value=180, width=8)
 r3.grid(column=5, row=2, padx=20)
 
-r4 = ttk.Radiobutton(root, text="270°", variable=r, value=270)
+r4 = ttk.Radiobutton(root, text="270°", variable=r, value=270, width=8)
 r4.grid(column=6, row=2, padx=20)
 
 flabel = ttk.Label(root, text="Added:", font=('Arial', 12))
