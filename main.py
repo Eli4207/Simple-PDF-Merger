@@ -21,10 +21,10 @@ def update_files():
     if len(pages) > 0:
         for i in range(0, len(filename)):
             if pages[i][0] == "a":
-                mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + str(filename[i]) + ", all pages" + "\n", font=('Arial', 12)))
+                mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + os.path.basename(str(filename[i]))[:35].split('.')[0] + ", all pages" + "\n", font=('Arial', 12)))
                 mergelist[i].grid(column=0, row=3 + i)
             else:
-                mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + str(filename[i]) + ", p." + pages[i][0] + " - p." + pages[i][1] + "\n", font=('Arial', 12)))
+                mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + os.path.basename(str(filename[i]))[:35].split('.')[0] + ", p." + pages[i][0] + " - p." + pages[i][1] + "\n", font=('Arial', 12)))
                 mergelist[i].grid(column=0, row=3 + i)
             buttonlist.append(ttk.Button(root, text="Delete", width=7, command=partial(delete, i)))
             buttonlist.append(ttk.Button(root, text="Down", width=7, command=partial(move_down, i)))
