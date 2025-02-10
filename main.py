@@ -26,9 +26,9 @@ def update_files():
             else:
                 mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + str(filename[i]) + ", p." + pages[i][0] + " - p." + pages[i][1] + "\n", font=('Arial', 12)))
                 mergelist[i].grid(column=0, row=3 + i)
-            buttonlist.append(ttk.Button(root, text="Delete", width=10, command=partial(delete, i)))
-            buttonlist.append(ttk.Button(root, text="Down", width=10, command=partial(move_down, i)))
-            buttonlist.append(ttk.Button(root, text="Up", width=10, command=partial(move_up, i)))
+            buttonlist.append(ttk.Button(root, text="Delete", width=10, padding=5, command=partial(delete, i)))
+            buttonlist.append(ttk.Button(root, text="Down", width=10, padding=5, command=partial(move_down, i)))
+            buttonlist.append(ttk.Button(root, text="Up", width=10, padding=5, command=partial(move_up, i)))
             buttonlist[i * 3].grid(column=3, row=3 + i, columnspan=4, sticky=ttk.W)
             buttonlist[i * 3 + 1].grid(column=3, row=3 + i, columnspan=4)
             buttonlist[i * 3 + 2].grid(column=3, row=3 + i, columnspan=4, sticky=ttk.E)
