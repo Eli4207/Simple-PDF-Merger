@@ -40,7 +40,7 @@ def update_files():
             elif i == 0:
                 buttonlist[i * 3 + 2].grid_forget()
 
-    olabel.grid(column=1, row=len(mergelist)+4)
+    olabel.grid(column=0, row=len(mergelist)+4)
     otextbox.grid(column=1, row=len(mergelist)+4)
     b2.grid(column=2, row=len(mergelist)+4)
     wlabel.grid(column=0, row=len(mergelist)+5)
