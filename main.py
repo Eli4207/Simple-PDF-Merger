@@ -9,6 +9,8 @@ pages = []
 rpages = []
 mergelist = []
 buttonlist = []
+index = 0
+comp_list = ["-", "Weak", "Middle", "Strong"]
 
 def update_files():
     for file in mergelist:
@@ -22,16 +24,16 @@ def update_files():
         for i in range(0, len(filename)):
             if pages[i][0] == "a":
                 mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + os.path.basename(str(filename[i]))[:35].split('.')[0] + ", all pages" + "\n", font=('Arial', 12)))
-                mergelist[i].grid(column=0, row=3 + i)
+                mergelist[i].grid(column=0, row=4 + i)
             else:
                 mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + os.path.basename(str(filename[i]))[:35].split('.')[0] + ", p." + pages[i][0] + " - p." + pages[i][1] + "\n", font=('Arial', 12)))
-                mergelist[i].grid(column=0, row=3 + i)
+                mergelist[i].grid(column=0, row=4 + i)
             buttonlist.append(ttk.Button(root, text="Delete", width=7, command=partial(delete, i)))
-            buttonlist.append(ttk.Button(root, text="Down", width=7, command=partial(move_down, i)))
-            buttonlist.append(ttk.Button(root, text="Up", width=7, command=partial(move_up, i)))
-            buttonlist[i * 3].grid(column=3, row=3 + i, columnspan=4, sticky=ttk.W)
-            buttonlist[i * 3 + 1].grid(column=3, row=3 + i, columnspan=4)
-            buttonlist[i * 3 + 2].grid(column=3, row=3 + i, columnspan=4, sticky=ttk.E)
+            buttonlist.append(ttk.Button(root, text="Down", width=7, command=partial(move, i, -1)))
+            buttonlist.append(ttk.Button(root, text="Up", width=7, command=partial(move, i, 1)))
+            buttonlist[i * 3].grid(column=3, row=4 + i, columnspan=4, sticky=ttk.W)
+            buttonlist[i * 3 + 1].grid(column=3, row=4 + i, columnspan=4)
+            buttonlist[i * 3 + 2].grid(column=3, row=4 + i, columnspan=4, sticky=ttk.E)
             if len(filename) == 1:
                 buttonlist[i * 3 + 1].grid_forget()
                 buttonlist[i * 3 + 2].grid_forget()
@@ -40,10 +42,10 @@ def update_files():
             elif i == 0:
                 buttonlist[i * 3 + 2].grid_forget()
 
-    olabel.grid(column=0, row=len(mergelist)+4)
-    otextbox.grid(column=1, row=len(mergelist)+4)
-    b2.grid(column=2, row=len(mergelist)+4)
-    wlabel.grid(column=0, row=len(mergelist)+5)
+    olabel.grid(column=0, row=len(mergelist)+5)
+    otextbox.grid(column=1, row=len(mergelist)+5)
+    b2.grid(column=2, row=len(mergelist)+5)
+    wlabel.grid(column=0, row=len(mergelist)+6)
 
 def add_file():
     file = filedialog.askopenfilename(initialdir=os.path.abspath(__file__), title="Select a File", filetypes=(("PDF files", "*.pdf*"),("All files", "*.*")))
@@ -71,33 +73,18 @@ def delete(i):
     rpages.pop(i)
     update_files()
 
-def move_up(i):
+def move(i, ud):
     temp_filename = filename[i]
-    filename[i] = filename[i - 1]
-    filename[i - 1] = temp_filename
+    filename[i] = filename[i - ud]
+    filename[i - ud] = temp_filename
 
     temp_pages = pages[i]
-    pages[i] = pages[i - 1]
-    pages[i - 1] = temp_pages
+    pages[i] = pages[i - ud]
+    pages[i - ud] = temp_pages
 
     temp_rpages = rpages[i]
-    rpages[i] = rpages[i - 1]
-    rpages[i - 1] = temp_rpages
-
-    update_files()
-
-def move_down(i):
-    temp_filename = filename[i]
-    filename[i] = filename[i + 1]
-    filename[i + 1] = temp_filename
-
-    temp_pages = pages[i]
-    pages[i] = pages[i + 1]
-    pages[i + 1] = temp_pages
-
-    temp_rpages = rpages[i]
-    rpages[i] = rpages[i + 1]
-    rpages[i + 1] = temp_rpages
+    rpages[i] = rpages[i - ud]
+    rpages[i - ud] = temp_rpages
 
     update_files()
 
@@ -107,22 +94,21 @@ def create_pdf():
     if len(filename) == 0:
         wlabel.configure(text="No files have been added!")
     elif not len(oname) == 0:
-        if tools.merge_pdf(filename, pages, rpages, oname):
+        if tools.merge_pdf(filename, pages, rpages, oname, index):
             wlabel.configure(text=oname + ".pdf successfully created!")
-            filename.clear()
-            pages.clear()
-            update_files()
             ptextbox.replace("1.0", "end-1c", "")
             otextbox.replace("1.0", "end-1c", "")
         else:
             wlabel.configure(text="Page numbers invalid!")
-            filename.clear()
-            pages.clear()
-            update_files()
             ptextbox.replace("1.0", "end-1c", "")
             otextbox.replace("1.0", "end-1c", "")
     else:
         wlabel.configure(text="The output file has no name!")
+
+def update_comp(i):
+    global index
+    index = min(int(float(i)), len(comp_list)-1)
+    cvlabel.config(text=comp_list[index])
 
 
 root = ttk.Window(themename="litera")
@@ -144,7 +130,7 @@ b1 = ttk.Button(root, text="Search file", width=30, command=add_file)
 b1.grid(column=2, row=1, padx=8)
 
 rlabel = ttk.Label(root, text="Rotation (clockwise): ", font=('Arial', 12))
-rlabel.grid(column=0, row=2)
+rlabel.grid(column=2, row=2)
 
 r1 = ttk.Radiobutton(root, text="0°", variable=r, value=0, state="normal", width=8)
 r1.grid(column=3, row=2, padx=20)
@@ -158,20 +144,29 @@ r3.grid(column=5, row=2, padx=20)
 r4 = ttk.Radiobutton(root, text="270°", variable=r, value=270, width=8)
 r4.grid(column=6, row=2, padx=20)
 
+clabel = ttk.Label(root, text="Image compression: ", font=('Arial', 12))
+clabel.grid(column=2, row=3)
+
+comp = ttk.Scale(root, from_=0, to=len(comp_list), command=update_comp)
+comp.grid(column=3, row=3)
+
+cvlabel = ttk.Label(root, text="-", font=('Arial', 12))
+cvlabel.grid(column=4, row=3)
+
 flabel = ttk.Label(root, text="Added:", font=('Arial', 12))
-flabel.grid(column=0, row=3)
+flabel.grid(column=0, row=4)
 
 olabel = ttk.Label(root, text="Output filename:", font=('Arial', 12))
-olabel.grid(column=0, row=4, padx=8)
+olabel.grid(column=0, row=5, padx=8)
 
 otextbox = ttk.Text(root, width=15, height=1, wrap='word')
-otextbox.grid(column=1, row=4)
+otextbox.grid(column=1, row=5)
 
 b2 = ttk.Button(root, text="Create PDF", width=30, command=create_pdf)
-b2.grid(column=2, row=4)
+b2.grid(column=2, row=5)
 
 wlabel = ttk.Label(root, text=" ", font=('Arial', 12))
-wlabel.grid(column=0, row=5)
+wlabel.grid(column=0, row=6)
 
 
 root.mainloop()
