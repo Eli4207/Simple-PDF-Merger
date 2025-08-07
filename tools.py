@@ -12,13 +12,19 @@ def merge_pdf(filename, pages, rpages, oname, comp):
                     if rpages[i] > 0:
                         page.rotate(rpages[i])
                     writer.add_page(page)
-            else:
+            elif len(pages[i]) == 2:
                 b_page = int(pages[i][0]) - 1
                 e_page = int(pages[i][1])
                 for j in range(b_page, e_page):
                     if rpages[i] > 0:
                         reader.pages[j].rotate(rpages[i])
                     writer.add_page(reader.pages[j])
+            elif len(pages[i]) == 1:
+                be_page = int(pages[i][0]) - 1
+                if rpages[i] > 0:
+                    reader.pages[be_page].rotate(rpages[i])
+                writer.add_page(reader.pages[be_page])
+
         except:
             return False
 
@@ -31,4 +37,14 @@ def merge_pdf(filename, pages, rpages, oname, comp):
     writer.write(output)
     writer.close()
     output.close()
+    return True
+
+def check_pagenr(filename, uinput):
+    reader = PdfReader(filename)
+    for page in uinput:
+        pagenr = int(page)
+        if not pagenr in range(1, reader.get_num_pages() + 1):
+            print(page)
+            print(reader.get_num_pages())
+            return False
     return True

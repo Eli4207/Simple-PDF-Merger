@@ -25,9 +25,13 @@ def update_files():
             if pages[i][0] == "a":
                 mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + os.path.basename(str(filename[i]))[:35].split('.')[0] + ", all pages" + "\n", font=('Arial', 12)))
                 mergelist[i].grid(column=0, row=4 + i)
-            else:
+            elif len(pages[i]) == 2:
                 mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + os.path.basename(str(filename[i]))[:35].split('.')[0] + ", p." + pages[i][0] + " - p." + pages[i][1] + "\n", font=('Arial', 12)))
                 mergelist[i].grid(column=0, row=4 + i)
+            else:
+                mergelist.append(ttk.Label(root, text=str(i + 1) + ". " + os.path.basename(str(filename[i]))[:35].split('.')[0] + ", p." + pages[i][0] + "\n", font=('Arial', 12)))
+                mergelist[i].grid(column=0, row=4 + i)
+
             buttonlist.append(ttk.Button(root, text="Delete", width=7, command=partial(delete, i)))
             buttonlist.append(ttk.Button(root, text="Down", width=7, command=partial(move, i, -1)))
             buttonlist.append(ttk.Button(root, text="Up", width=7, command=partial(move, i, 1)))
@@ -49,16 +53,18 @@ def update_files():
 
 def add_file():
     file = filedialog.askopenfilename(initialdir=os.path.abspath(__file__), title="Select a File", filetypes=(("PDF files", "*.pdf*"),("All files", "*.*")))
-
     uinput = ptextbox.get("1.0", "end-1c").replace(" ", "").rsplit("-")
 
-    if not (str(file) == "" or str(file) == "()"):
-        if uinput[0].isdecimal() and len(uinput) == 2:
-            if uinput[1].isdecimal():
-                filename.append(file)
-                pages.append(uinput)
-                rpages.append(r.get())
-                wlabel.configure(text="")
+    if not (uinput[0] == "" or str(file) == "" or str(file) == "()"):
+        if uinput[0].isdecimal():
+            if len(uinput) == 1 or (len(uinput) == 2 and uinput[1].isdecimal() and uinput[1] >= uinput[0]):
+                if tools.check_pagenr(file, uinput):
+                    filename.append(file)
+                    pages.append(uinput)
+                    rpages.append(r.get())
+                    wlabel.configure(text="")
+                else:
+                    wlabel.configure(text="Page number(s) invalid!")
         elif uinput[0] == "a":
             filename.append(file)
             pages.append(uinput)
@@ -99,7 +105,7 @@ def create_pdf():
             ptextbox.replace("1.0", "end-1c", "")
             otextbox.replace("1.0", "end-1c", "")
         else:
-            wlabel.configure(text="Page numbers invalid!")
+            wlabel.configure(text="Something went wrong!")
             ptextbox.replace("1.0", "end-1c", "")
             otextbox.replace("1.0", "end-1c", "")
     else:
